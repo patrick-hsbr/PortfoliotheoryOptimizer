@@ -8,13 +8,6 @@ interface Props {
 export const CorrelationMatrix: React.FC<Props> = ({ assets, matrix }) => {
   const getColor = (val: number) => {
     // Red for +1, Green for -1/0 (Desired low correlation)
-    // +1 -> rgb(239, 68, 68) (red-500)
-    // 0 -> rgb(255, 255, 255)
-    // -1 -> rgb(34, 197, 94) (green-500)
-    
-    // Simple logic: High correlation is "Bad" for diversification (Red)
-    // Low/Negative is "Good" (Green/Blue)
-    
     if (val > 0) {
       // White to Red
       const intensity = Math.floor(255 * (1 - val));
@@ -27,39 +20,48 @@ export const CorrelationMatrix: React.FC<Props> = ({ assets, matrix }) => {
   };
 
   return (
-    <div className="overflow-x-auto p-4 bg-white rounded-lg shadow border border-slate-200">
-      <h3 className="text-lg font-semibold mb-4 text-slate-800">Korrelationsmatrix (Correlation)</h3>
-      <table className="min-w-full text-xs text-center">
-        <thead>
-          <tr>
-            <th className="p-2"></th>
-            {assets.map((asset) => (
-              <th key={asset} className="p-2 font-bold text-slate-600">{asset}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {matrix.map((row, i) => (
-            <tr key={assets[i]}>
-              <td className="p-2 font-bold text-slate-600 text-left">{assets[i]}</td>
-              {row.map((val, j) => (
-                <td 
-                  key={`${i}-${j}`} 
-                  className="p-2 border border-slate-100"
-                  style={{ backgroundColor: getColor(val) }}
-                  title={`Correlation ${assets[i]} vs ${assets[j]}: ${val.toFixed(2)}`}
-                >
-                  {val.toFixed(2)}
-                </td>
+    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow border border-slate-200 dark:border-slate-700 transition-colors h-[400px] md:h-[500px] flex flex-col justify-between">
+      <h3 className="text-lg font-semibold mb-6 text-slate-800 dark:text-white flex-shrink-0">Korrelationsmatrix</h3>
+      
+      <div className="overflow-auto flex-grow flex items-center justify-center w-full">
+        <table className="text-xs text-center border-collapse m-auto">
+          <thead>
+            <tr>
+              <th className="p-2 sticky top-0 bg-white dark:bg-slate-800 z-10"></th>
+              {assets.map((asset) => (
+                <th key={asset} className="p-2 font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap sticky top-0 bg-white dark:bg-slate-800 z-10 shadow-sm">{asset}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="text-xs text-slate-500 mt-2">
-        <span className="inline-block w-3 h-3 bg-red-500 mr-1"></span> Hohe Korrelation (Klumpenrisiko)
-        <span className="inline-block w-3 h-3 bg-green-500 ml-3 mr-1"></span> Niedrige/Negative Korrelation (Diversifikation)
-      </p>
+          </thead>
+          <tbody>
+            {matrix.map((row, i) => (
+              <tr key={assets[i]}>
+                <td className="p-2 font-bold text-slate-600 dark:text-slate-300 text-left whitespace-nowrap sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-sm">{assets[i]}</td>
+                {row.map((val, j) => (
+                  <td 
+                    key={`${i}-${j}`} 
+                    className="p-3 border border-slate-100 dark:border-slate-600 text-slate-900"
+                    style={{ backgroundColor: getColor(val) }}
+                    title={`Correlation ${assets[i]} vs ${assets[j]}: ${val.toFixed(2)}`}
+                  >
+                    {val.toFixed(2)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Gradient Legend */}
+      <div className="mt-4 px-4 flex-shrink-0">
+        <div className="h-4 w-full rounded-full bg-gradient-to-r from-green-500 via-white to-red-500 shadow-inner border border-slate-100 dark:border-slate-600"></div>
+        <div className="flex justify-between text-xs mt-2 text-slate-500 dark:text-slate-400 font-medium">
+          <span>-1 (Diversifikation)</span>
+          <span>0 (Unkorreliert)</span>
+          <span>+1 (Klumpenrisiko)</span>
+        </div>
+      </div>
     </div>
   );
 };

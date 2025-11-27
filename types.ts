@@ -1,3 +1,4 @@
+
 export interface AssetInput {
   id: string;
   ticker: string;
@@ -16,6 +17,7 @@ export interface PortfolioStats {
   risk: number;
   sharpe: number;
   weights: number[];
+  var95?: number;
 }
 
 export interface OptimizationResult {
@@ -26,6 +28,9 @@ export interface OptimizationResult {
   minVarPortfolio: PortfolioStats;
   maxSharpePortfolio: PortfolioStats;
   riskContribution: number[];
+  isSimulation: boolean; // New flag
+  benchmarkPortfolio?: PortfolioStats;
+  assetNames?: Record<string, string>;
 }
 
 export enum OptimizerModel {
@@ -33,3 +38,5 @@ export enum OptimizerModel {
   MIN_VAR = 'MIN_VAR',
   MAX_SHARPE = 'MAX_SHARPE',
 }
+
+export type TimeRange = '1y' | '2y' | '5y';
